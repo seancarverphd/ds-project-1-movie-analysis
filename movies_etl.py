@@ -36,7 +36,7 @@ budgeted_movies['domestic_gross'] = pd.to_numeric(
 
 # Rename columns by copying then dropping all redundant columns, including those defined above.
 budgeted_movies['title'] = budgeted_movies.movie
-budgeted_movies.drop(['production_budget', 'worldwide_gross', 'movie'], axis=1)
+budgeted_movies.drop(['production_budget', 'worldwide_gross', 'movie'], axis=1, inplace=True)
 
 # Create new budget features: ROI and Foreign Gross
 budgeted_movies['roi'] = (budgeted_movies.gross - budgeted_movies.budget) / budgeted_movies.budget
@@ -61,6 +61,8 @@ budgeted_movies = budgeted_movies[mask_after_2010 & mask_before_2019]
 #           remove movies with Unknown genres
 #           remove all movies from genres having sample size less than 10
 
+index_to_missing_genres = list(np.where(movies['genres'].isna())[0])
+
 # INSERT HERE FROM CODE BELOW
 
 # Join budgeted and genres data frame: set index of each then join.
@@ -72,7 +74,7 @@ movies = budgeted_movies.join(genred_movies, how='inner')
 # Include genre, sample_size, median_roi, proportion_failed, adjusted_risk, BtoR
 # Could also include other summary statistics for each genre: mean, Q1, Q3, min, max
 # Here proportion failed = P0, could also have P1, P10.
-# Might also have an all_genres dataframe that is not sample size restricted.
+# Might also have an all_genres data frame that is not sample size restricted.
 # Sort genres by median ROI
 test_median = movies.groupby('genres').roi.median().sort_values(ascending=False)
 
